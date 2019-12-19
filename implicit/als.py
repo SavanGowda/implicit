@@ -173,6 +173,11 @@ class AlternatingLeastSquares(MatrixFactorizationBase):
                     self.user_factors[:, -2] = 1.0
                 solver(Ciu, self.item_factors, self.user_factors, self.regularization,
                        num_threads=self.num_threads)
+                if self.use_bias:
+                    # hard-code last value in each item_factor vector as 1
+                    # that way the last value in each user_factor vector
+                    # becomes independent of the items and represents a learned user bias
+                    self.item_factors[:, -1] = 1.0
                 progress.update(1)
 
                 if self.calculate_training_loss:
