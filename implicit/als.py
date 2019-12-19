@@ -158,8 +158,26 @@ class AlternatingLeastSquares(MatrixFactorizationBase):
                 s = time.time()
                 solver(Cui, self.user_factors, self.item_factors, self.regularization,
                        num_threads=self.num_threads)
+                if self.use_bias:
+                    # IMPLICIT ALS WITH BIAS ####
+                    # --> last value in each user_factor vector and
+                    # second-to-last value in each item_factor vector becom bias terms
+                    # the corresponding value in the other matrix is hard-coded to 1
+                    # that way the dot product will be sum(uf_k*if_k) + ub + ib
+                    # short mathematical intuition below
+                    # see more: https://github.com/benfred/implicit/issues/176
+                    ##############################
+                    # hard-code second-to-last value in each user_factor vector as 1
+                    # that way the second to last value in each item_factor vector
+                    # becomes independent of the users and represents a learned item bias
+                    self.user_factors[:, -2] = 1.0
                 solver(Ciu, self.item_factors, self.user_factors, self.regularization,
                        num_threads=self.num_threads)
+                if self.use_bias:
+                    # hard-code last value in each item_factor vector as 1
+                    # that way the last value in each user_factor vector
+                    # becomes independent of the items and represents a learned user bias
+                    self.item_factors[:, -1] = 1.0
                 progress.update(1)
 
                 if self.calculate_training_loss:
