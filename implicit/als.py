@@ -135,9 +135,15 @@ class AlternatingLeastSquares(MatrixFactorizationBase):
         s = time.time()
         # Initialize the variables randomly if they haven't already been set
         if self.user_factors is None:
-            self.user_factors = np.random.rand(users, self.factors).astype(self.dtype) * 0.01
+            # self.user_factors = np.random.rand(users, self.factors).astype(self.dtype) * 0.01
+            self.user_factors = np.random.rand(users, self.factors + 2).astype(self.dtype) * 0.01
+            if self.use_bias:
+                self.user_factors[:, -2] = 1.0
         if self.item_factors is None:
-            self.item_factors = np.random.rand(items, self.factors).astype(self.dtype) * 0.01
+            #self.item_factors = np.random.rand(items, self.factors).astype(self.dtype) * 0.01
+            self.item_factors = np.random.rand(items, self.factors + 2).astype(self.dtype) * 0.01
+            if self.use_bias:
+                self.item_factors[:, -1] = 1.0
 
         log.debug("Initialized factors in %s", time.time() - s)
 
