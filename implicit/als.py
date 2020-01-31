@@ -87,6 +87,7 @@ class AlternatingLeastSquares(MatrixFactorizationBase):
         self.num_threads = num_threads
         self.fit_callback = None
         self.cg_steps = 3
+        self.use_bias = use_bias
 
         # cache for item factors squared
         self._YtY = None
